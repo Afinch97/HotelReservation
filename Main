@@ -1,0 +1,219 @@
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+import static java.util.Calendar.DATE;
+
+import java.sql.Date;
+import java.time.DayOfWeek;
+import java.time.temporal.ChronoUnit;
+
+
+public class Main {
+
+	public static void main(String[] args) {
+		ArrayList<rooms> room= new ArrayList<rooms>();
+		ArrayList<single> single = new ArrayList<single>();
+		ArrayList<doublee> doublee = new ArrayList<doublee>();
+		ArrayList<suite> suite = new ArrayList<suite>();
+		ArrayList<pentHouse> pentHouse = new ArrayList<pentHouse>();
+		LinkedList<rooms> available = new LinkedList<>();
+		Queue<rooms> bookedIt = new LinkedList<rooms>();
+		long millis=System.currentTimeMillis();  					//This actually takes the current time and sets that as the date so it works whenever
+	    java.sql.Date date=new java.sql.Date(millis);   			//date is the current date. date2 is what i'm changing to set the premade reservations
+		Date date2 = new java.sql.Date(date.getTime());
+		 Date date3 = new java.sql.Date(date.getTime());
+		Date date4 = new java.sql.Date(date.getTime());
+		//Date date5 = new java.sql.Date(date.getTime());
+		Calendar c = new GregorianCalendar();
+		c.setTime(date);
+		Calendar c2 = new GregorianCalendar();
+		Calendar c3 = new GregorianCalendar();
+		System.out.println(c2.getTime());
+
+		Scanner scanner = new Scanner (System.in);
+		printMenu();
+		String choice = scanner.nextLine();
+		if(choice.equalsIgnoreCase("q")) {
+			System.out.println("Okay no hard feelings here, have a good day!");
+			printMenu();
+		}
+				
+		else if(choice.equalsIgnoreCase("1")) {
+				System.out.println("Please enter the date you would be interested in visiting one of or rooms. We would prefer if you would use the yyyy-[m]m-[d]d format");
+				String starting = scanner.nextLine();
+				while(matches(starting)==false) {
+					System.out.println("I know we said prefer but it's not really an option here. Please enter the date again using the format yyyy-[m]m-[d]d");
+					starting = scanner.nextLine();
+				}
+
+				date2=Date.valueOf(starting);
+				date3=date2;
+				System.out.println("What a great day to be joining us! How many days will you be with us?");
+				int out = scanner.nextInt();
+				int news = date2.getDate()+out;
+				date2.setDate(news);
+			//	System.out.println(date2.toString());
+				System.out.println("That's a good amount of time, I hope you make the most of it!\n\nHere's a list of the type of rooms we can accomodate for you...\n");
+				printRoomTypes();
+				
+				for(int i=0;i<3;i++) {										//creating the penthouses	
+					date2=Date.valueOf(starting);
+					int random = (int) (Math.random()*31);
+					int randomp=random+7;
+			//		System.out.println(date2+", "+randomp+", "+date3);
+					date2.setDate(random);				
+					date3.setDate(randomp);
+					int f = 20;												//I figure the penthouses should be on the top floor and there's 20 floors in the made up hotel
+					int j = (int) (Math.random()*98);						//For every floor there's 99 different available room number options
+					int k = Integer.valueOf(String.valueOf(f) + String.valueOf(j)); //This just combines them so the floor number is the first number in the room number. Not needed at all but it made sense I guess
+				//	date2.setDate(c2.DATE);
+				//	date3.setDate(c3.DATE);
+					pentHouse pent = new pentHouse(k, f, date2, date3);
+					//System.out.println(date2.toString());
+					//System.out.println(pent.staringDate);
+					room.add(pent);
+					pentHouse.add(pent);
+				}
+				for (int i=0;i<7;i++) {
+					date2=Date.valueOf(starting);
+					date3=Date.valueOf(starting);
+					int random = (int) (Math.random()*31);
+					int randomp=random+7;
+					date2.setDate(random);				
+					date3.setDate(randomp);
+					int f = 13 + (int)(Math.random() * ((19 - 13) + 1));					//set the suites to go between floors 19-13							
+					int j = (int) (Math.random()*98);						
+					int k = Integer.valueOf(String.valueOf(f) + String.valueOf(j)); 
+					suite e = new suite(k, f, date2, date3);
+				//	System.out.println(e.staringDate);
+					room.add(e);
+					suite.add(e);
+				}
+				for (int i=0;i<11;i++) {
+					date2=Date.valueOf(starting);
+					date3=date2;
+					int random = (int) (Math.random()*31);
+					int randomp=random+7;
+					
+					date2.setDate(random-7);				
+					date3.setDate(randomp);
+					int f = 4 + (int)(Math.random() * ((15 - 4) + 1));					//set the doubles to go between floors 15-4							
+					int j = (int) (Math.random()*98);						
+					int k = Integer.valueOf(String.valueOf(f) + String.valueOf(j)); 
+					doublee e = new doublee(k, f, date2, date3);
+					//System.out.println(e.staringDate);
+					room.add(e);
+					doublee.add(e);
+				}
+				for (int i=0;i<11;i++) {
+					date2=Date.valueOf(starting);
+					date3=date2;
+					int random = (int) (Math.random()*31);
+					int randomp=random+7;
+					System.out.println("Before: "+random+", "+date2+", "+randomp+", "+date3);
+					date2.setDate(random);			
+					date3.setDate(randomp);
+					System.out.println("After: "+random+", "+date2+", "+randomp+", "+date3);
+					int f = 1+ (int)(Math.random() * ((11 - 1) + 1));					//set the singles to go between floors 11-1					
+					int j = (int) (Math.random()*98);						
+					int k = Integer.valueOf(String.valueOf(f) + String.valueOf(j)); 
+					single e = new single(k, f, date2, date3);
+				//	System.out.println(""+date2.toString()+" , "+date3.toString());
+					room.add(e);
+					single.add(e);
+				}
+				int choice2 = scanner.nextInt();
+				if(choice2==1) {
+					System.out.println("Okay you I see you're a solo traveler. Here are our available rooms for that time frame: ");
+			
+					for(int l =0; l<single.size();l++) {
+						if(single.get(l).booked(date2, date3)==true) {
+							available.add(single.get(l));
+						}
+					}
+				int size = available.size();
+				for(int n=0;n<size;n++) {
+					System.out.println(n+": "+available.get(n));
+				}
+				}
+				if(choice2==3) {
+					System.out.println("Here are the suites available for that time: ");
+			
+					for(int l =0; l<suite.size();l++) {
+						if(suite.get(l).booked(date2, date3)==true) {
+							available.add(suite.get(l));
+						}
+					}
+				int size = available.size();
+				for(int n=0;n<size;n++) {
+					System.out.println(n+": "+available.get(n));
+				}
+				}
+				if(choice2==2) {
+					System.out.println("Two's company. Here's the available double rooms: ");
+			
+					for(int l =0; l<doublee.size();l++) {
+						if(doublee.get(l).booked(date2, date3)==true) {
+							available.add(doublee.get(l));
+						}
+					}
+				int size = available.size();
+				for(int n=0;n<size;n++) {
+					System.out.println(n+": "+available.get(n));
+				}
+				}
+				if(choice2==4) {
+					System.out.println("Alright we got a big baller here. These are all the available rooms, boss: ");
+			
+					for(int l =0; l<pentHouse.size();l++) {
+						if(pentHouse.get(l).booked(date2, date3)==true) {
+							available.add(single.get(l));
+						}
+					}
+				int size = available.size();
+				for(int n=0;n<size;n++) {
+					System.out.println(n+": "+available.get(n));
+				}
+				}
+				if(choice2==5) {
+					System.out.println("I guess you're pretty flixible with your room choices, huh. Here's all we got free for that time: ");
+			
+					for(int l =0; l<room.size();l++) {
+						if(room.get(l).booked(date2, date3)==true) {
+							available.add(room.get(l));
+						}
+					}
+				int size = available.size();
+				for(int n=0;n<size;n++) {
+					System.out.println(n+": "+available.get(n));
+				}
+				}
+				}
+
+			}
+	
+
+		
+	public static void printMenu() {
+		System.out.println("~~~~ Hotel Menu ~~~~");
+		System.out.println("Welcome to Hotel Whatever!\npress '1' to start your room exploration.\nOr press 'Q' if you want to exit ");
+	
+	}
+	public static void printRoomTypes() {
+		System.out.println("~~~~ Room Choices ~~~~");
+		System.out.println("1. Single      Price: $180 per night    Single bed in a single room. Doesn't get more basic than this");
+		System.out.println("2. Double      Price: $220 per night    You get 2 beds in one room with this room choice. \n"
+				+ "                                        Highly recomended for extremely tall customers.");
+		System.out.println("3. Suite       Price: $380 per night    This is for the customers who want a little taste of the suite life. Get it?");
+		System.out.println("4. Penthouse   Price: $2500 per night   As good as it gets and as good as it's ever going to get.\n"
+				+ "                                        Top floor view so you can get a good look at all of the peasants.");
+		System.out.println("\nPlease feel free to pick any of the numbers 1 through 4 as they are the best quality we can put out."
+				+ "\nYou can also press 5 if you want to see everything we got or 'Q' to get out of here.");
+	}
+	public static boolean matches( String d) {
+		return d.matches("\\d{4}-\\d{1,2}-\\d{1,2}");
+	}
+	
+
+}
+
