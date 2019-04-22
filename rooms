@@ -1,0 +1,67 @@
+import java.sql.Date;
+import java.time.temporal.ChronoUnit;
+import java.util.Calendar;
+
+public class rooms {
+	public final static long SECOND_MILLIS = 1000;
+    public final static long MINUTE_MILLIS = SECOND_MILLIS*60;
+    public final static long HOUR_MILLIS = MINUTE_MILLIS*60;
+    public final static long DAY_MILLIS = HOUR_MILLIS*24;
+	private int roomNumber;
+	private int floor;
+	private String custumberName;
+ 	boolean booked;
+	Date staringDate;
+	Date endingDate;
+	//Calendar start,end;
+	private int stayLength;
+	public rooms(int roomNumber,int floor, Date staringDate, Date endingDate) {
+		this.roomNumber = roomNumber;
+		this.floor = floor;
+		this.staringDate= staringDate;
+		this.endingDate=endingDate;
+		this.stayLength= this.daysDiff(staringDate, endingDate);
+	}
+
+	public int getRoomNumber() {
+		return roomNumber;
+	}
+	public int getFloor() {
+		return floor;
+	}
+	public String getCustumberName() {
+		return custumberName;
+	}
+	public void setCustumberName(String custumberName) {
+		this.custumberName = custumberName;
+	}
+	public Date getStaringDate() {
+		return staringDate;
+	}
+	public void setStaringDate(Date date) {
+		this.staringDate = date;
+	}
+	public Date getEndingDate() {
+		return endingDate;
+	}
+	public void setEndingDate(Date date) {
+		this.endingDate = date;
+	}
+	public boolean booked(Date start, Date end) {
+		if(start.after(endingDate)||end.before(staringDate)==true) {
+			return true;
+		}
+		return false;
+	}
+	public int daysDiff( Date earlierDate, Date laterDate )
+    {
+        if( earlierDate == null || laterDate == null ) return 0;
+        
+        return (int)((laterDate.getTime()/DAY_MILLIS) - (earlierDate.getTime()/DAY_MILLIS));
+    }
+
+	public String toString() {
+		return "Room: "+this.roomNumber +" located on floor "+ this.floor+" for "+ daysDiff(staringDate, endingDate)+" days";
+	}
+
+ }
